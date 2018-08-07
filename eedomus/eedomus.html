@@ -1,0 +1,79 @@
+<script type="text/x-red" data-template-name="Eedomus Get Device">
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-server"></i> Hub</label>
+        <input type="text" id="node-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-deviceid"><i class="icon-tag"></i> DeviceID</label>
+        <input type="text" id="node-input-deviceid" style="width: 57%;">
+        <a id="node-input-scan" class="editor-button"><i class="fa fa-search"></i></a>
+    </div>
+</script>
+<script type="text/x-red" data-help-name="Eedomus Get Device">
+    <p>A node to get a <b>Value</b> from a eedomus Hub through Node-RED</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('Eedomus Get Device', {
+        category: 'eedomus',
+        color: '#FFEB3B',
+        defaults: {
+            name: { value: "" },
+            server: { type: "eedomus-server", required: true },
+            deviceid: { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "feed.png",
+        label: function () {
+            return this.name || "Eedomus Get Device";
+        },
+        oneditprepare: function () {
+            var config = RED.nodes.node($('#node-input-server').val());
+            function toggleSelect() {
+                var current = $('#node-input-activity').val();
+                $('#node-input-scan').html("<i class='fa fa-search'></i>");
+                $('#node-input-deviceid').replaceWith('<input type="text" id="node-input-deviceid" style="width: 57%;"/>');
+                $('#node-input-deviceid').val(current);
+            }
+            $('#node-input-scan').click(function () {
+                if ($('#node-input-deviceid').prop("tagName") === "INPUT") {
+                    toggleInput();
+                } else {
+                    toggleSelect();
+                }
+            });
+            function toggleInput() {
+                var current = $('#node-input-deviceid').val();
+                $('#node-input-deviceid').val("Loading devices...")
+
+                if (config) {
+                    $.get("https://api.eedomus.com/get?action=periph.caract&periph_id=all&api_user=" + config.api_user + "&api_secret=" + config.api_secret)
+                        .done(function (data) {
+                            var periph_all = JSON.parse(data).body;
+                            $('#node-input-scan').html("<i class='fa fa-i-cursor'></i>");
+                            $('#node-input-deviceid').replaceWith('<select id="node-input-deviceid" style="width: 60%;"></select>');
+                            $('#node-input-deviceid').on('change', function () {
+                                $('#node-input-label').val($('#node-input-deviceid option:selected').text());
+                            });
+                            if (!periph_all || periph_all.length <= 0) {
+                                RED.notify("No device found.", "error");
+                                return;
+                            }
+                            periph_all.forEach(function (periph_all) {
+                                $('#node-input-deviceid').append('<option value="' + periph_all.periph_id + '">' + periph_all.name + '</option>');
+                            });
+                            $('#node-input-deviceid').val(current);
+                            console.log(data);
+                        }).fail(function (err) {
+                            RED.notify(err.responseText, "error");
+                        });
+                }
+            }
+        }
+    });
+</script>

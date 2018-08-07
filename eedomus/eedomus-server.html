@@ -1,0 +1,57 @@
+<script type="text/x-red" data-template-name="eedomus-server">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-header"></i> Name</label>
+        <input type="text" id="node-config-input-name" />
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-ip"><i class="fa fa-server"></i> IP</label>
+        <input type="text" id="node-config-input-ip" style="width: 60%;"/>
+        <a id="node-config-input-scan" class="editor-button"><i class="fa fa-search"></i></a>
+    </div>
+    <div class="form-row">
+      <label for="node-config-input-api_user"><i class="fa fa-header"></i> api_user</label>
+      <input type="text" id="node-config-input-api_user" />
+    </div>
+    <div class="form-row">
+      <label for="node-config-input-api_secret"><i class="fa fa-header"></i> api_secret</label>
+      <input type="text" id="node-config-input-api_secret" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-secure">HTTPS</label>
+        <input type="checkbox" id="node-input-secure" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-api_web">Api Web</label>
+        <input type="checkbox" id="node-input-api_web" style="display:inline-block; width:auto; vertical-align:top;">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("eedomus-server", {
+        category: "config",
+        defaults: {
+            name: { value: "", required: false },
+            ip: { value: "", required: true },
+            api_user: { value: "", required: true },
+            api_secret: { value: "", required: true },
+            api_web: { value: false, required: false },
+        },
+        label: function () {
+            return this.name ? this.name : "Eedomus Server";
+        },
+        oneditprepare: function () {
+            $('#node-config-input-scan').click(function () {
+                $.get('eedomus/server')
+                    .done(function (data) {
+                        var ip = JSON.parse(data);
+                        $('#node-config-input-ip').append('<option value="' + ip + '">' + ip + '</option>');
+                        $('#node-config-input-ip').val(ip);
+                        RED.notify("eedomus Hub with IP " + ip + " found.");
+                    })
+                    .fail(function () {
+                        RED.notify("Something went wrong discovering an eedomus Hub", "error");
+                    });
+            });
+        }
+    });
+</script>

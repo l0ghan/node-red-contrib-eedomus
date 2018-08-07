@@ -1,0 +1,27 @@
+{
+    "name": "node-red-contrib-eedomus",
+    "version": "1.0.0",
+    "description": "eedomus integration for Node-RED",
+    "license": "",
+    "dependencies": {
+        "request": "~2.83.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Aietes/node-red-contrib-eedomus.git"
+    },
+    "keywords": [
+        "node-red",
+        "eedomus",
+        "remote"
+    ],
+    "node-red": {
+        "nodes": {
+            "eedomus": "eedomus/eedomus.js",
+            "eedomus-server": "eedomus/eedomus-server.js"
+        }
+    },
+    "author": {
+        "name": "Julien Des"
+    }
+}
