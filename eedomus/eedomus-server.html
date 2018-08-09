@@ -18,7 +18,7 @@
             <option value="local">Local</option>
         </select>
     </div>
-    <div id="ipdiv" class="form-row" style="display: none;">
+    <div name="ipdiv" id="ipdiv" class="form-row" style="display: none;">
         <label for="node-config-input-ip"><i class="fa fa-server"></i> IP</label>
         <input type="text" id="node-config-input-ip" style="width: 60%;"/>
         <a id="node-config-input-scan" class="editor-button"><i class="fa fa-search"></i></a>
@@ -42,10 +42,12 @@
             $('#node-config-input-api_web').change(function () {
                 if ($('#node-config-input-api_web').val() == "web" )
                 {
+                    $('#ipdiv').replaceWith('<div id="ipdiv" class="form-row">');
                     console.log("web");
                 }
                 else if ($('#node-config-input-api_web').val() == "local")
                 {
+                    $('#ipdiv').replaceWith('<div id="ipdiv" class="form-row" style="display: none;">');
                     console.log("local");
                 }
                 else{}
