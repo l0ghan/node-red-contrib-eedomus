@@ -4,11 +4,6 @@
         <input type="text" id="node-config-input-name" />
     </div>
     <div class="form-row">
-        <label for="node-config-input-ip"><i class="fa fa-server"></i> IP</label>
-        <input type="text" id="node-config-input-ip" style="width: 60%;"/>
-        <a id="node-config-input-scan" class="editor-button"><i class="fa fa-search"></i></a>
-    </div>
-    <div class="form-row">
       <label for="node-config-input-api_user"><i class="fa fa-header"></i> api_user</label>
       <input type="text" id="node-config-input-api_user" />
     </div>
@@ -17,8 +12,16 @@
       <input type="text" id="node-config-input-api_secret" />
     </div>
     <div class="form-row">
-        <label for="node-input-api_web">Api Web</label>
-        <input type="checkbox" id="node-input-api_web" style="display:inline-block; width:auto; vertical-align:top;">
+        <label for="node-config-input-api_web"><i class="icon-tag"></i> api_web</label>
+        <select id="node-config-input-api_web">
+            <option selected value="web">Web</option>
+            <option value="local">Local</option>
+        </select>
+    </div>
+    <div id="ipdiv" class="form-row" style="display: none;">
+        <label for="node-config-input-ip"><i class="fa fa-server"></i> IP</label>
+        <input type="text" id="node-config-input-ip" style="width: 60%;"/>
+        <a id="node-config-input-scan" class="editor-button"><i class="fa fa-search"></i></a>
     </div>
 </script>
 
@@ -27,15 +30,26 @@
         category: "config",
         defaults: {
             name: { value: "", required: false },
-            ip: { value: "", required: true },
+            ip: { value: "", required: false },
             api_user: { value: "", required: true },
             api_secret: { value: "", required: true },
-            api_web: { required: false }
+            api_web: { value: "web", required: true }
         },
         label: function () {
             return this.name ? this.name : "Eedomus Server";
         },
         oneditprepare: function () {
+            $('#node-config-input-api_web').change(function () {
+                if ($('#node-config-input-api_web').val() == "web" )
+                {
+                    console.log("web");
+                }
+                else if ($('#node-config-input-api_web').val() == "local")
+                {
+                    console.log("local");
+                }
+                else{}
+            });
             $('#node-config-input-scan').click(function () {
                 $.get('eedomus/server')
                     .done(function (data) {

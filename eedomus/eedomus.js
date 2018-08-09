@@ -1,6 +1,6 @@
 module.exports = function (RED) {
     var request = require("request");
-    function EedomusGetCommand(n) {
+    function EedomusCommand(n) {
         RED.nodes.createNode(this, n)
         var node = this
         node.server = RED.nodes.getNode(n.server)
@@ -39,5 +39,5 @@ module.exports = function (RED) {
             }
         });
     }
-    RED.nodes.registerType('Eedomus Get Device', EedomusGetCommand)
+    RED.nodes.registerType('Eedomus Device', EedomusCommand)
 }
