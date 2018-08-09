@@ -5,18 +5,30 @@ module.exports = function (RED) {
         var node = this
         node.server = RED.nodes.getNode(n.server)
         node.deviceid = n.deviceid
+        node.operation = n.operation
         node.on('input', function (msg) {
-            if (node.server.api_web == true)
+            if (node.server.api_web == "web" && node.operation == "get")
             {
                 node.url = "https://api.eedomus.com/get?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.caract&periph_id=" + node.deviceid;
-                //console.log(node.url );
+            }
+            else if (node.server.api_web == "local" && node.operation == "get")
+            {
+                node.url = "http://"+node.server.ip+"/get?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.caract&periph_id=" + node.deviceid;
+            }
+            else if (node.server.api_web == "web" && node.operation == "set")
+            {
+                node.url = "https://api.eedomus.com/set?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.value&periph_id=" + node.deviceid + "&value=" +msg.payload;
+            }
+            else if (node.server.api_web == "local" && node.operation == "set") 
+            {
+                node.url = "http://" + node.server.ip + "/api/set?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.value&periph_id=" + node.deviceid + "&value=" +msg.payload;
             }
             else
             {
-                node.url = "http://"+node.server.ip+"/get?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.caract&periph_id=" + node.deviceid;
-                //console.log(node.url);
+                console.log("error");
             }
             if (node.url) {
+                console.log(node.url );
                 request.get(node.url, function (error, result, data) {
                     msg.payload = JSON.parse(data).body;
                     if (error) {
@@ -24,17 +36,14 @@ module.exports = function (RED) {
                          return;
                      }
                      try {
-                        node.send(msg);
+                         node.send(msg);
                      } catch (e) {
                          console.log("erreur sur l envoie du msg");
                          return;
                      }
-                    //console.log('error:', error); // Print the error if one occurred
-                    //console.log('statusCode:', result && result.statusCode); // Print the response status code if a response was received
-                    //console.log(data); // Print the HTML for the Google homepage.
-                    
                 });
-            } else {
+            }
+             else {
                 console.log("erreur sur url");
             }
         });

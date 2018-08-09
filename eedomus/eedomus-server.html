@@ -42,12 +42,12 @@
             $('#node-config-input-api_web').change(function () {
                 if ($('#node-config-input-api_web').val() == "web" )
                 {
-                    $('#ipdiv').replaceWith('<div id="ipdiv" class="form-row">');
+                    $('#ipdiv').hide();
                     console.log("web");
                 }
                 else if ($('#node-config-input-api_web').val() == "local")
                 {
-                    $('#ipdiv').replaceWith('<div id="ipdiv" class="form-row" style="display: none;">');
+                    $('#ipdiv').show();
                     console.log("local");
                 }
                 else{}
