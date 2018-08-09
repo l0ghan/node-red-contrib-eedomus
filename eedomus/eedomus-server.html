@@ -17,10 +17,6 @@
       <input type="text" id="node-config-input-api_secret" />
     </div>
     <div class="form-row">
-        <label for="node-input-secure">HTTPS</label>
-        <input type="checkbox" id="node-input-secure" style="display:inline-block; width:auto; vertical-align:top;">
-    </div>
-    <div class="form-row">
         <label for="node-input-api_web">Api Web</label>
         <input type="checkbox" id="node-input-api_web" style="display:inline-block; width:auto; vertical-align:top;">
     </div>
@@ -34,7 +30,7 @@
             ip: { value: "", required: true },
             api_user: { value: "", required: true },
             api_secret: { value: "", required: true },
-            api_web: { value: false, required: false },
+            api_web: { required: false }
         },
         label: function () {
             return this.name ? this.name : "Eedomus Server";

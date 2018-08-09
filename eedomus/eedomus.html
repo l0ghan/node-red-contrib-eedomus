@@ -1,3 +1,4 @@
+<!-- begin get device -->
 <script type="text/x-red" data-template-name="Eedomus Get Device">
     <div class="form-row">
         <label for="node-input-server"><i class="fa fa-server"></i> Hub</label>
@@ -6,6 +7,13 @@
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-operation"><i class="icon-tag"></i> Operation</label>
+        <select id="node-input-operation" name="operation" style="width: 57%>
+            <option selected value="get">Get</option>
+            <option value="set">Set</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-deviceid"><i class="icon-tag"></i> DeviceID</label>
@@ -24,7 +32,8 @@
         defaults: {
             name: { value: "" },
             server: { type: "eedomus-server", required: true },
-            deviceid: { value: "" }
+            deviceid: { value: "" },
+            operation: { value: "" }
         },
         inputs: 1,
         outputs: 1,
@@ -34,6 +43,7 @@
         },
         oneditprepare: function () {
             var config = RED.nodes.node($('#node-input-server').val());
+            //if (config.)
             function toggleSelect() {
                 var current = $('#node-input-activity').val();
                 $('#node-input-scan').html("<i class='fa fa-search'></i>");
@@ -50,7 +60,7 @@
             function toggleInput() {
                 var current = $('#node-input-deviceid').val();
                 $('#node-input-deviceid').val("Loading devices...")
-
+                //console.log(config.operation)
                 if (config) {
                     $.get("https://api.eedomus.com/get?action=periph.caract&periph_id=all&api_user=" + config.api_user + "&api_secret=" + config.api_secret)
                         .done(function (data) {
@@ -77,3 +87,4 @@
         }
     });
 </script>
+<!-- end get device -->

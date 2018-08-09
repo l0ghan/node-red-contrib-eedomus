@@ -9,29 +9,24 @@ module.exports = function (RED) {
             if (node.server.api_web == true)
             {
                 node.url = "https://api.eedomus.com/get?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.caract&periph_id=" + node.deviceid;
-                console.log(node.url );
-            }
-            else if (node.server.api_web == false)
-            {
-                node.url = "http://"+node.server.ip+"/get?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.caract&periph_id=" + node.deviceid;
-                console.log(node.url);
+                //console.log(node.url );
             }
             else
             {
-                callback("eedomus.error.invalid-param");
-                return;
+                node.url = "http://"+node.server.ip+"/get?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.caract&periph_id=" + node.deviceid;
+                //console.log(node.url);
             }
             if (node.url) {
                 request.get(node.url, function (error, result, data) {
                     msg.payload = JSON.parse(data).body;
                     if (error) {
-                         callback(error);
+                        console.log("erreur sur le retour de la requete web");
                          return;
                      }
                      try {
                         node.send(msg);
                      } catch (e) {
-                         callback("eedomus.error.invalid-json");
+                         console.log("erreur sur l envoie du msg");
                          return;
                      }
                     //console.log('error:', error); // Print the error if one occurred
@@ -40,7 +35,7 @@ module.exports = function (RED) {
                     
                 });
             } else {
-                callback("eedomus.error.invalid-location");
+                console.log("erreur sur url");
             }
         });
     }
