@@ -13,7 +13,7 @@ module.exports = function (RED) {
             }
             else if (node.server.api_web == "local" && node.operation == "get")
             {
-                node.url = "http://"+node.server.ip+"/get?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.caract&periph_id=" + node.deviceid;
+                node.url = "http://"+node.server.ip+"/api/get?api_user=" + node.server.api_user + "&api_secret=" + node.server.api_secret + "&action=periph.caract&periph_id=" + node.deviceid;
             }
             else if (node.server.api_web == "web" && node.operation == "set")
             {
