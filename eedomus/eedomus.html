@@ -43,20 +43,34 @@
         },
         oneditprepare: function () {
             var config = RED.nodes.node($('#node-input-server').val());
-            //if (config.)
+
+            // search devices if input is empty
+            if ($('#node-input-deviceid').prop("tagName") === "") {
+                $('#node-input-scan').click(function () {
+                    if ($('#node-input-deviceid').prop("tagName") === "INPUT") {
+                        toggleInput();
+                    } else {
+                        toggleSelect();
+                    }
+                });
+            } else {
+                toggleInput();
+            }            
+
+            /**
+             * Select device name.
+             * */
             function toggleSelect() {
                 var current = $('#node-input-activity').val();
                 $('#node-input-scan').html("<i class='fa fa-search'></i>");
                 $('#node-input-deviceid').replaceWith('<input type="text" id="node-input-deviceid" style="width: 57%;"/>');
                 $('#node-input-deviceid').val(current);
             }
-            $('#node-input-scan').click(function () {
-                if ($('#node-input-deviceid').prop("tagName") === "INPUT") {
-                    toggleInput();
-                } else {
-                    toggleSelect();
-                }
-            });
+            
+            /**
+             * Find list of devices.
+             *
+             * */
             function toggleInput() {
                 var current = $('#node-input-deviceid').val();
                 $('#node-input-deviceid').val("Loading devices...")
