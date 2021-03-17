@@ -43,28 +43,46 @@
         },
         oneditprepare: function () {
             var config = RED.nodes.node($('#node-input-server').val());
-            //if (config.)
+
+            // search devices if input is empty
+            if ($('#node-input-deviceid').prop("tagName") === "") {
+                $('#node-input-scan').click(function () {
+                    if ($('#node-input-deviceid').prop("tagName") === "INPUT") {
+                        toggleInput();
+                    } else {
+                        toggleSelect();
+                    }
+                });
+            } else {
+                toggleInput();
+            }            
+
+            /**
+             * Select device name.
+             * */
             function toggleSelect() {
                 var current = $('#node-input-activity').val();
                 $('#node-input-scan').html("<i class='fa fa-search'></i>");
                 $('#node-input-deviceid').replaceWith('<input type="text" id="node-input-deviceid" style="width: 57%;"/>');
                 $('#node-input-deviceid').val(current);
             }
-            $('#node-input-scan').click(function () {
-                if ($('#node-input-deviceid').prop("tagName") === "INPUT") {
-                    toggleInput();
-                } else {
-                    toggleSelect();
-                }
-            });
+            
+            /**
+             * Find list of devices.
+             *
+             * */
             function toggleInput() {
                 var current = $('#node-input-deviceid').val();
                 $('#node-input-deviceid').val("Loading devices...")
-                //console.log(config.operation)
                 if (config) {
-                    $.get("https://api.eedomus.com/get?action=periph.caract&periph_id=all&api_user=" + config.api_user + "&api_secret=" + config.api_secret)
+                    var url = "https://api.eedomus.com";
+                    if(config.api_web == "local"){
+                        url = "http://"+ config.ip + "/api";
+                    }
+                    $.get(url + "/get?action=periph.list&api_user=" + config.api_user + "&api_secret=" + config.api_secret)
                         .done(function (data) {
                             var periph_all = JSON.parse(data).body;
+                            periph_all.sort(dynamicSort("name"));
                             $('#node-input-scan').html("<i class='fa fa-i-cursor'></i>");
                             $('#node-input-deviceid').replaceWith('<select id="node-input-deviceid" style="width: 60%;"></select>');
                             $('#node-input-deviceid').on('change', function () {
@@ -75,13 +93,34 @@
                                 return;
                             }
                             periph_all.forEach(function (periph_all) {
-                                $('#node-input-deviceid').append('<option value="' + periph_all.periph_id + '">' + periph_all.name + '</option>');
+                                $('#node-input-deviceid').append('<option value="' + periph_all.periph_id + '">' + periph_all.name + ' | ' + periph_all.periph_id + '</option>');
                             });
                             $('#node-input-deviceid').val(current);
-                            console.log(data);
                         }).fail(function (err) {
                             RED.notify(err.responseText, "error");
                         });
+                }
+            }
+
+            /**
+             * Function to sort alphabetically an array of objects by some specific key.
+             * 
+             * @param {String} property Key of the object to sort.
+             */
+            function dynamicSort(property) {
+                var sortOrder = 1;
+
+                if(property[0] === "-") {
+                    sortOrder = -1;
+                    property = property.substr(1);
+                }
+
+                return function (a,b) {
+                    if(sortOrder == -1){
+                        return b[property].localeCompare(a[property]);
+                    }else{
+                        return a[property].localeCompare(b[property]);
+                    }        
                 }
             }
         }
